@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
+
 import 'package:flutter/services.dart';
+
 import 'package:product_app/providers/frm_product.provider.dart';
 import 'package:product_app/ui/ui.dialogs.dart';
-import 'package:provider/provider.dart';
 
 import 'package:product_app/providers/product_provider.dart';
 import 'package:product_app/ui/input.decoration.dart';
@@ -42,7 +45,7 @@ class _ContentFrmProduct extends StatelessWidget {
       
             Stack(
               children: [
-                ImgProduct( ),
+                ImgProduct( urlImg: producP.data.urlImg ?? '' ),
       
                 Positioned(
                   top: 70.0,
@@ -61,7 +64,15 @@ class _ContentFrmProduct extends StatelessWidget {
                   top: 70.0,
                   right: 25.0,
                   child: IconButton(
-                    onPressed: () {}, 
+                    onPressed: () async {
+                      final _picker = ImagePicker();
+                      final XFile? _picked = await _picker.pickImage(source: ImageSource.gallery );
+
+                      if (_picked != null) {
+                        producP.onSelectedFile( _picked.path );
+                      }
+
+                    }, 
                     icon: Icon( Icons.camera_alt_outlined, size: 40, color: Colors.white, )
                   ),
                 )

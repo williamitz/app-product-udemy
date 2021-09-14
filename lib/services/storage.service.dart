@@ -18,6 +18,13 @@ class StorageService {
   set token(String val) => _prefs.setString('token', val);
 
   String get token => _prefs.getString('token') ?? '';
+
+  Future<bool> onClearStorage() async {
+    return await _prefs.remove('token');
+  }
   
-  
+  Future<String> onLoadToken() async{
+    return  _prefs.getString('token') ?? '';
+  }
+
 }

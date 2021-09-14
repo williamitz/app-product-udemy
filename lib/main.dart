@@ -35,9 +35,10 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Material App',
-      initialRoute:  'home', // _st.token == '' ? 'login' :
+      initialRoute:  'splash', // _st.token == '' ? 'login' :
 
       routes: {
+        'splash'  : (_) => SplashPage(),
         'login'   : (_) => LoginPage(),
         'singin'  : (_) => SinginPage(),
         'home'    : (_) => HomePage(),

@@ -1,47 +1,50 @@
 // To parse this JSON data, do
 //
-//     final productModel = productModelFromJson(jsonString);
+//     final productModel = productModelFromMap(jsonString);
 
 import 'dart:convert';
 
-ProductModel productModelFromJson(String str) => ProductModel.fromJson(json.decode(str));
-
-String productModelToJson(ProductModel data) => json.encode(data.toJson());
-
-Map<String, dynamic> productModelToJsonNode(ProductModel data) => data.toJson();
-
 class ProductModel {
     ProductModel({
-        this.pkProduct = 0,
-        this.fkUser = 0,
+        this.pkProduct,
         required this.nameProduct,
         required this.priceProduct,
-        this.urlImg = '',
+        this.urlImg,
         required this.statusRegister,
     });
 
     int? pkProduct;
-    int? fkUser;
     String nameProduct;
     double priceProduct;
     String? urlImg;
     bool statusRegister;
 
-    factory ProductModel.fromJson(Map<String, dynamic> json) => ProductModel(
-        pkProduct: json["pkProduct"] as int,
-        fkUser: json["fkUser"],
+    factory ProductModel.fromJson(String str) => ProductModel.fromMap(json.decode(str));
+
+    String toJson() => json.encode(toMap());
+    Map<String, String> toJsonNode() => toMapNode();
+
+    factory ProductModel.fromMap(Map<String, dynamic> json) => ProductModel(
+        pkProduct: json["pkProduct"],
         nameProduct: json["nameProduct"],
         priceProduct: json["priceProduct"].toDouble(),
         urlImg: json["urlImg"],
-        statusRegister: json["statusRegister"],
+        statusRegister: json["statusRegister"] == 1 ? true: false,
     );
 
-    Map<String, dynamic> toJson() => {
+    Map<String, dynamic> toMap() => {
         "pkProduct": pkProduct,
-        "fkUser": fkUser,
         "nameProduct": nameProduct,
         "priceProduct": priceProduct,
         "urlImg": urlImg,
         "statusRegister": statusRegister,
+    };
+
+    Map<String, String> toMapNode() => {
+        "pkProduct": pkProduct.toString(),
+        "nameProduct": nameProduct,
+        "priceProduct": priceProduct.toString(),
+        "urlImg": urlImg ?? '',
+        "statusRegister": statusRegister.toString(),
     };
 }

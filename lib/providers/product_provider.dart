@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:product_app/models/product.model.dart';
 import 'package:product_app/services/product.service.dart';
+import 'dart:async';
 
 class ProductProvider extends ChangeNotifier {
   
@@ -8,21 +11,28 @@ class ProductProvider extends ChangeNotifier {
 
   final proSvc = ProductService();
 
+  File? fileTemp;
+
   bool loading = false;
   bool loadData = false;
-  ProductModel data = ProductModel(nameProduct: '', priceProduct: 0, statusRegister: true);
+  ProductModel data = ProductModel(nameProduct: '', priceProduct: 0.0, statusRegister: true);
   
   ProductProvider() {
     this.onGetProducts();
   }
 
   void onLoadData( ProductModel rec ) {
-    this.loadData = true;
-    data = rec;
+    this.loadData       = true;
+    data.pkProduct      = rec.pkProduct;
+    data.priceProduct   = rec.priceProduct;
+    data.statusRegister = rec.statusRegister;
+    data.nameProduct    = rec.nameProduct;
+    data.urlImg         = rec.urlImg;
   }
 
   void onReset() {
     this.loadData = false;
+    this.data.urlImg = '';
   }
 
   Future<List<ProductModel>> onGetProducts() async {
@@ -41,12 +51,10 @@ class ProductProvider extends ChangeNotifier {
     data.forEach((el) {
       
       // final eltemp = productModelFromJson( el.toString() );
-      final productTemp = ProductModel(nameProduct: el['nameProduct'] ?? ''
-                                      , priceProduct: el['priceProduct']
-                                      , statusRegister: el['statusRegister'] );   
-      productTemp.pkProduct = el['pkProduct'] as int;
+      final productTemp = ProductModel.fromMap(el);   
+      // productTemp.pkProduct = el['pkProduct'] as int;
 
-      productTemp.urlImg = el['urlImg'] ;
+      // productTemp.urlImg = el['urlImg'] ;
       this.listProduct.add( productTemp );
       
     });
@@ -57,13 +65,23 @@ class ProductProvider extends ChangeNotifier {
     return this.listProduct;
   }
 
+  void onSelectedFile( String path ) {
+    
+    this.fileTemp = File.fromUri( Uri.file(path) );
+    this.data.urlImg = path;
+
+    notifyListeners();
+
+  }
+
   Future<Map<String, dynamic>> onAdd( ProductModel body ) async {
     
     final res = await proSvc.onAddProduct(body);
-    final showError = int.parse(res['showError'] ?? 0);
+    print('response post: $res');
+    final showError = res['showError'] ?? 0;
 
     if (res['ok'] && showError == 0) {
-      body.pkProduct = int.parse(res['data'].pk ?? 0);
+      body.pkProduct = res['pk'] ?? 0;
       this.listProduct.add(body);
       notifyListeners();
     } 
@@ -74,7 +92,8 @@ class ProductProvider extends ChangeNotifier {
   Future<Map<String, dynamic>> onUpdate( ProductModel body ) async {
     
     final res = await proSvc.onUpdateProduct(body);
-    final showError = int.parse(res['showError'] ?? 0) ;
+    print('response: $res');
+    final showError = res['showError'] ?? 0 ;
 
     if (res['ok'] && showError == 0) {
       final index = this.listProduct.indexWhere((e) => e.pkProduct == body.pkProduct);

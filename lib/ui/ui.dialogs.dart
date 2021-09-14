@@ -6,14 +6,7 @@ class Loadingw extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text('Espere...'),
-          SizedBox(height: 10.0,),
-          CircularProgressIndicator()
-        ],
-      ),
+      child: CircularProgressIndicator(),
     );
   }
 }

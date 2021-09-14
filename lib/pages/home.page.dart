@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:product_app/pages/pages.module.dart';
 import 'package:product_app/providers/product_provider.dart';
+import 'package:product_app/services/storage.service.dart';
 import 'package:product_app/widgets/cardProduct.dart';
 import 'package:provider/provider.dart';
 
@@ -11,6 +12,7 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     
     final producP = Provider.of<ProductProvider>(context);
+    final _st = StorageService();
     
     if (producP.loading) {
       return LoadingPage();
@@ -19,6 +21,15 @@ class HomePage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Home'),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.logout_outlined),
+            onPressed: () async{
+              await _st.onClearStorage();
+              Navigator.pushReplacementNamed(context, 'login');
+            },
+          )
+        ],
       ),
 
       body: ListView.builder(

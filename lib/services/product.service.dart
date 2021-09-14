@@ -1,5 +1,5 @@
+import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'dart:convert' as convert;
 
 import 'package:product_app/environments/environment.dart';
 import 'package:product_app/models/product.model.dart';
@@ -10,12 +10,12 @@ class ProductService {
   final st = StorageService();
 
   Future<Map<String, dynamic>> onGetList() async {
-    final endPoint = Uri.http( urlServer, '/Product');
+    final url = Uri.http( urlServer, '/Product');
 
-    final response = await http.get(endPoint, headers: { 'Authorization': st.token } );
+    final response = await http.get(url, headers: { 'Authorization': st.token } );
 
     if (response.statusCode == 200) {
-      return convert.jsonDecode(response.body) as Map<String, dynamic>;
+      return jsonDecode(response.body) as Map<String, dynamic>;
     }    
     return { "ok": false, "error": response };
   }
@@ -23,31 +23,25 @@ class ProductService {
   Future<Map<String, dynamic>> onAddProduct( ProductModel body ) async {
     final endPoint = Uri.http( urlServer, '/Product');
 
-    final response = await http.post(endPoint , body: productModelToJsonNode( body ) , headers: { 'Authorization': st.token } );
+    final response = await http.post(endPoint , body: body.toJsonNode() , headers: { 'Authorization': st.token } );
 
     if (response.statusCode == 200) {
-      return convert.jsonDecode(response.body) as Map<String, dynamic>;
+      return jsonDecode(response.body) as Map<String, dynamic>;
     }    
     return { "ok": false, "error": response };
   }
 
   Future<Map<String, dynamic>> onUpdateProduct( ProductModel body ) async {
 
-    print('product pk ${body.pkProduct}');
-    print('product name ${body.nameProduct}');
-    print('product price ${body.priceProduct}');
-    print('product status ${body.statusRegister}');
-    print('product img ${body.urlImg}');
-    print('product fk ${body.fkUser}');
 
-    final endPoint = Uri.http( urlServer, '/Product/${body.pkProduct ?? 0}');
+    final url = Uri.http( urlServer, '/Product/${body.pkProduct}');
 
-    final response = await http.put(endPoint
-            , body: productModelToJsonNode( body )
+    final response = await http.put(url
+            , body: body.toJsonNode()
             , headers: { 'Authorization': st.token } );
 
     if (response.statusCode == 200) {
-      return convert.jsonDecode(response.body) as Map<String, dynamic>;
+      return jsonDecode(response.body) as Map<String, dynamic>;
     }    
     return { "ok": false, "error": response };
   }
